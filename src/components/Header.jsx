@@ -4,14 +4,14 @@ import Toolbar from "@mui/material/Toolbar";
 import { Stack } from "@mui/material";
 import { Link, useNavigate } from "react-router";
 import "../css/Header.css";
-import logo from "../image/nba-logo.jpg";
+import logo from "../image/ProxymapLogo.png";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
 function Header() {
   const navigate = useNavigate();
   return (
-    <AppBar sx={{ backgroundColor: "#0253a4" }}>
+    <AppBar sx={{ backgroundColor: "black" }}>
       <Toolbar>
         <Box
           onClick={() => navigate("/")}
@@ -25,14 +25,14 @@ function Header() {
           }}
         />
 
-        <Stack direction="row" sx={{ marginLeft: "10px" }}>
+        {/* <Stack direction="row" sx={{ marginLeft: "10px" }}>
           <Link className="link" to="/">
             Roads
           </Link>
           <Link className="link" to="/">
             AI Assist
           </Link>
-        </Stack>
+        </Stack> */}
         <Stack direction="row " sx={{ marginLeft: "auto" }}>
           <Button color="inherit" onClick={() => navigate("/login")}>
             Login
