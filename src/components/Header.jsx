@@ -4,7 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import { Stack } from "@mui/material";
 import { Link, useNavigate } from "react-router";
 import "../css/Header.css";
-import logo from "../image/ProxymapLogo.png";
+import logo from "../image/Logo.png";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
@@ -19,25 +19,33 @@ function Header() {
           src={logo}
           alt="Logo"
           sx={{
-            height: { xs: 40, sm: 50, md: 64 },
-            mr: 2,
+            height: { xs: 40, sm: 45, md: 54 },
+            mr: 3,
+            borderRadius: "10px",
             cursor: "pointer",
           }}
         />
-
-        {/* <Stack direction="row" sx={{ marginLeft: "10px" }}>
-          <Link className="link" to="/">
-            Roads
-          </Link>
-          <Link className="link" to="/">
-            AI Assist
-          </Link>
-        </Stack> */}
-        <Stack direction="row " sx={{ marginLeft: "auto" }}>
-          <Button color="inherit" onClick={() => navigate("/login")}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            marginLeft: "auto",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Button
+            color="inherit"
+            variant="outlined"
+            onClick={() => navigate("/login")}
+          >
             Login
           </Button>
-          <Button color="inherit" onClick={() => navigate("/signup")}>
+          <Button
+            color="inherit"
+            variant="outlined"
+            onClick={() => navigate("/signup")}
+          >
             Sign up
           </Button>
         </Stack>
