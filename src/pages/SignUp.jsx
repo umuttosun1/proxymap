@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   TextField,
@@ -7,13 +7,40 @@ import {
   Divider,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
+import { useDispatch, useSelector } from "react-redux";
+import { createUser } from "../redux/slices/authSlice"; // Redux Slice'ı içe aktar
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.auth);
+
+  const [formData, setFormData] = useState({
+    fullname: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const resultAction = await dispatch(createUser(formData));
+
+    if (createUser.fulfilled.match(resultAction)) {
+      navigate("/dashboard"); // Kullanıcı başarıyla kaydolursa yönlendir
+    }
+  };
+
   return (
     <Container maxWidth="xs" sx={{ textAlign: "center", mt: 5 }}>
       <Typography variant="h4" fontWeight="bold">
         Hesap Oluştur
       </Typography>
+
       <Button
         variant="outlined"
         fullWidth
@@ -31,36 +58,53 @@ const SignUp = () => {
 
       <Divider sx={{ my: 2 }}>VEYA</Divider>
 
-      <TextField
-        label="İsim Soyisim"
-        variant="outlined"
-        fullWidth
-        color="black"
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        label="E-Posta Adresi"
-        variant="outlined"
-        fullWidth
-        color="black"
-        sx={{ mb: 1 }}
-      />
-      <TextField
-        label="Şifre"
-        type="password"
-        variant="outlined"
-        fullWidth
-        color="black"
-        sx={{ mb: 3 }}
-      />
+      {/* Form */}
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="İsim Soyisim"
+          variant="outlined"
+          fullWidth
+          name="fullname"
+          value={formData.fullname}
+          onChange={handleChange}
+          required
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          label="E-Posta Adresi"
+          variant="outlined"
+          fullWidth
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          sx={{ mb: 1 }}
+        />
+        <TextField
+          label="Şifre"
+          type="password"
+          variant="outlined"
+          fullWidth
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+          sx={{ mb: 3 }}
+        />
 
-      <Button
-        variant="contained"
-        fullWidth
-        sx={{ backgroundColor: "black", color: "white" }}
-      >
-        E-Posta Doğrula
-      </Button>
+        {/* Hata mesajı gösterme */}
+        {error && <Typography color="error">{error}</Typography>}
+
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{ backgroundColor: "black", color: "white" }}
+          disabled={loading}
+        >
+          {loading ? "Kaydediliyor..." : "E-Posta Doğrula"}
+        </Button>
+      </form>
 
       <Typography variant="body2" sx={{ mt: 2 }}>
         Hesabın zaten var mı?{" "}

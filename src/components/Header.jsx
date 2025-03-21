@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import { Stack } from "@mui/material";
 import { Link, useNavigate } from "react-router";
 import "../css/Header.css";
 import logo from "../image/Logo.png";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import { Box, Button, IconButton } from "@mui/material";
+import { AccountCircle, MoreVert as MoreIcon } from "@mui/icons-material";
 
 function Header() {
   const navigate = useNavigate();
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Kullanıcı giriş yaptı mı?
+
+  const menuId = "primary-search-account-menu";
   return (
     <AppBar sx={{ backgroundColor: "black" }}>
       <Toolbar>
@@ -25,30 +29,54 @@ function Header() {
             cursor: "pointer",
           }}
         />
-        <Stack
-          direction="row"
-          spacing={2}
-          sx={{
-            marginLeft: "auto",
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <Button
-            color="inherit"
-            variant="outlined"
-            onClick={() => navigate("/login")}
+        {isAuthenticated ? (
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              marginLeft: "auto",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
           >
-            Login
-          </Button>
-          <Button
-            color="inherit"
-            variant="outlined"
-            onClick={() => navigate("/signup")}
+            <IconButton
+              size="large"
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={() => console.log("Profil açıldı")}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+          </Stack>
+        ) : (
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              marginLeft: "auto",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
           >
-            Sign up
-          </Button>
-        </Stack>
+            <Button
+              color="inherit"
+              variant="outlined"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </Button>
+            <Button
+              color="inherit"
+              variant="outlined"
+              onClick={() => navigate("/signup")}
+            >
+              Sign up
+            </Button>
+          </Stack>
+        )}
       </Toolbar>
     </AppBar>
   );
