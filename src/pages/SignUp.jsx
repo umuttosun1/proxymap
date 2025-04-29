@@ -7,7 +7,7 @@ import {
   Divider,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../redux/slices/authSlice"; // Yeni thunk
+import { createUser } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
@@ -28,16 +28,16 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const resultAction = await dispatch(registerUser(formData));
+    const resultAction = await dispatch(createUser(formData));
 
-    if (registerUser.fulfilled.match(resultAction)) {
-      navigate("/login"); // Başarılı kayıt → login sayfasına yönlendir
+    if (createUser.fulfilled.match(resultAction)) {
+      navigate("/login");
     }
   };
 
   return (
     <Container maxWidth="xs" sx={{ textAlign: "center", mt: 5 }}>
-      <Typography variant="h4" fontWeight="bold">
+      <Typography variant="h4" fontWeight="bold" mb={2}>
         Hesap Oluştur
       </Typography>
 
@@ -83,11 +83,15 @@ const SignUp = () => {
           value={formData.password}
           onChange={handleChange}
           required
-          sx={{ mb: 3 }}
+          sx={{ mb: 1 }}
         />
 
+        {/* Şifre ile Buton arasına yerleştirilen küçük hata bilgilendirmesi */}
         {error && (
-          <Typography color="error" sx={{ mb: 2 }}>
+          <Typography
+            variant="body2"
+            sx={{ color: "red", mb: 2, textAlign: "left" }}
+          >
             {error}
           </Typography>
         )}
@@ -103,7 +107,7 @@ const SignUp = () => {
         </Button>
       </form>
 
-      <Typography variant="body2">
+      <Typography variant="body2" mt={2}>
         Zaten hesabın var mı?{" "}
         <a href="/login" style={{ textDecoration: "none" }}>
           Giriş Yap

@@ -1,64 +1,63 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/api/auth";
+const API_URL = "http://localhost:8080/api/auth"; // backend URL
 
-// ➤ Kayıt işlemi
-export const registerUser = createAsyncThunk(
-  "auth/registerUser",
+export const createUser = createAsyncThunk(
+  "auth/createUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/register`, userData);
+      const response = await axios.post(`${API_URL}/register`, userData);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Kayıt başarısız.");
+      // 🔥 Hatalı response'un içeriğini doğru yakala
+      const message =
+        error.response?.data ||
+        "Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.";
+      return rejectWithValue(message);
     }
   }
 );
 
-// ➤ Giriş işlemi
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
-  async ({ email, password }, { rejectWithValue }) => {
+  async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/login`, {
-        email,
-        password,
-      });
-
-      const token = response.data;
-      localStorage.setItem("token", token);
-      return token;
+      const response = await axios.post(`${API_URL}/login`, userData);
+      localStorage.setItem("token", response.data);
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Giriş başarısız.");
+      const message = error.response?.data || "E posta veya Sifreniz Hatali";
+      return rejectWithValue(message);
     }
   }
 );
 
-// ➤ Redux Slice
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    token: localStorage.getItem("token") || null,
+    user: null,
     loading: false,
     error: null,
+    isAuthenticated: !!localStorage.getItem("token"),
   },
   reducers: {
     logout: (state) => {
-      state.token = null;
+      state.user = null;
+      state.isAuthenticated = false;
       localStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(registerUser.pending, (state) => {
+      .addCase(createUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state) => {
+      .addCase(createUser.fulfilled, (state, action) => {
         state.loading = false;
       })
-      .addCase(registerUser.rejected, (state, action) => {
+      .addCase(createUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -68,7 +67,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.token = action.payload;
+        state.isAuthenticated = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
