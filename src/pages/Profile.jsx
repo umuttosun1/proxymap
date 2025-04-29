@@ -6,6 +6,11 @@ import {
   Button,
   Box,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -17,6 +22,7 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const handlePasswordChange = async () => {
     try {
@@ -52,11 +58,24 @@ const Profile = () => {
         },
       });
       localStorage.removeItem("token");
-      window.location.href = "/signup"; // Hesap silindikten sonra yönlendir
+      window.location.href = "/signup";
     } catch (err) {
       setError(err.response?.data || "Hesap silinemedi.");
       setSuccess("");
     }
+  };
+
+  const handleOpenDeleteDialog = () => {
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
+  const handleConfirmDelete = () => {
+    handleDeleteAccount();
+    setOpenDeleteDialog(false);
   };
 
   return (
@@ -113,7 +132,7 @@ const Profile = () => {
           variant="contained"
           color="error"
           fullWidth
-          onClick={handleDeleteAccount}
+          onClick={handleOpenDeleteDialog}
         >
           Hesabımı Sil
         </Button>
@@ -125,10 +144,28 @@ const Profile = () => {
         </Typography>
       )}
       {success && (
-        <Typography color="green" sx={{ mt: 2 }}>
+        <Typography color="success.main" sx={{ mt: 2 }}>
           {success}
         </Typography>
       )}
+
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Hesabı Sil</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Hesabınızı kalıcı olarak silmek istediğinize emin misiniz? Bu işlem
+            geri alınamaz.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="primary">
+            Vazgeç
+          </Button>
+          <Button onClick={handleConfirmDelete} color="error">
+            Hesabı Sil
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

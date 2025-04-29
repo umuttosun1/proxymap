@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/slices/authSlice"; // logout action'ı
 import logo from "../image/Logo.png";
-import "../css/Header.css";
 
 function Header() {
   const navigate = useNavigate();
@@ -86,30 +85,7 @@ function Header() {
             </Menu>
           </>
         ) : (
-          <Stack
-            direction="row"
-            spacing={2}
-            sx={{
-              marginLeft: "auto",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <Button
-              color="inherit"
-              variant="outlined"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </Button>
-            <Button
-              color="inherit"
-              variant="outlined"
-              onClick={() => navigate("/signup")}
-            >
-              Sign up
-            </Button>
-          </Stack>
+          <Stack></Stack>
         )}
       </Toolbar>
     </AppBar>

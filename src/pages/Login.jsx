@@ -38,9 +38,6 @@ const Login = () => {
       <Typography variant="h4" fontWeight="bold">
         Giriş Yap
       </Typography>
-
-      <Divider sx={{ my: 3 }}>VEYA</Divider>
-
       <form onSubmit={handleSubmit}>
         <TextField
           label="E-Posta Adresi"

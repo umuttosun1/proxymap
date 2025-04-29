@@ -40,9 +40,6 @@ const SignUp = () => {
       <Typography variant="h4" fontWeight="bold" mb={2}>
         Hesap Oluştur
       </Typography>
-
-      <Divider sx={{ my: 3 }}>VEYA</Divider>
-
       <form onSubmit={handleSubmit}>
         <TextField
           label="İsim"
