@@ -6,6 +6,7 @@ import SignUp from "../pages/SignUp";
 import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
 import PersonalityExams from "../pages/PersonalityExams";
+import OAuthRedirect from "./OAuthRedirect";
 
 function RouterConfig() {
   return (
@@ -16,6 +17,7 @@ function RouterConfig() {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/personality-exams" element={<PersonalityExams />} />
+      <Route path="/oauth2-redirect" element={<OAuthRedirect />} />
     </Routes>
   );
 }

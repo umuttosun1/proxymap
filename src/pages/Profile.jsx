@@ -91,36 +91,40 @@ const Profile = () => {
       </Box>
 
       <Divider sx={{ my: 3 }} />
-
-      <Box mb={4}>
-        <Typography variant="h6" mb={2}>
-          Şifre Değiştir
-        </Typography>
-        <TextField
-          label="Mevcut Şifre"
-          type="password"
-          fullWidth
-          sx={{ mb: 2 }}
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-        />
-        <TextField
-          label="Yeni Şifre"
-          type="password"
-          fullWidth
-          sx={{ mb: 2 }}
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{ backgroundColor: "black", color: "white" }}
-          onClick={handlePasswordChange}
-        >
-          Şifreyi Değiştir
-        </Button>
-      </Box>
+      {user?.provider !== "GOOGLE" && (
+        <>
+          <Divider sx={{ my: 3 }} />
+          <Box mb={4}>
+            <Typography variant="h6" mb={2}>
+              Şifre Değiştir
+            </Typography>
+            <TextField
+              label="Mevcut Şifre"
+              type="password"
+              fullWidth
+              sx={{ mb: 2 }}
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+            <TextField
+              label="Yeni Şifre"
+              type="password"
+              fullWidth
+              sx={{ mb: 2 }}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ backgroundColor: "black", color: "white" }}
+              onClick={handlePasswordChange}
+            >
+              Şifreyi Değiştir
+            </Button>
+          </Box>
+        </>
+      )}
 
       <Divider sx={{ my: 3 }} />
 

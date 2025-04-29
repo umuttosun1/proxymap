@@ -5,14 +5,13 @@ import { Stack, Box, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../redux/slices/authSlice"; // logout action'ı
+import { logout } from "../redux/slices/authSlice";
 import logo from "../image/Logo.png";
 
 function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Redux'tan oku
-
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleProfileMenuOpen = (event) => {
@@ -34,6 +33,9 @@ function Header() {
     navigate("/profile");
   };
 
+  const handleLogin = () => navigate("/login");
+  const handleSignup = () => navigate("/signup");
+
   const menuId = "primary-search-account-menu";
 
   return (
@@ -53,19 +55,10 @@ function Header() {
         />
         {isAuthenticated ? (
           <>
-            <Stack
-              direction="row"
-              spacing={2}
-              sx={{
-                marginLeft: "auto",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
+            <Stack direction="row" spacing={2} sx={{ marginLeft: "auto" }}>
               <IconButton
                 size="large"
                 edge="end"
-                aria-label="account of current user"
                 aria-controls={menuId}
                 aria-haspopup="true"
                 onClick={handleProfileMenuOpen}
@@ -80,13 +73,16 @@ function Header() {
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
-              <MenuItem onClick={handleLogout}>Sign Out</MenuItem>
+              <MenuItem disabled>
+                {user?.firstName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user?.email}
+              </MenuItem>
+              <MenuItem onClick={handleProfileClick}>Profil</MenuItem>
+              <MenuItem onClick={handleLogout}>Çıkış Yap</MenuItem>
             </Menu>
           </>
-        ) : (
-          <Stack></Stack>
-        )}
+        ) : null}
       </Toolbar>
     </AppBar>
   );

@@ -3,7 +3,7 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/auth";
 
-// Kullanıcı oluşturma (register)
+// Kullanıcı oluşturma
 export const createUser = createAsyncThunk(
   "auth/createUser",
   async (userData, { rejectWithValue }) => {
@@ -11,15 +11,13 @@ export const createUser = createAsyncThunk(
       const response = await axios.post(`${API_URL}/register`, userData);
       return response.data;
     } catch (error) {
-      const message =
-        error.response?.data ||
-        "Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.";
+      const message = error.response?.data || "Beklenmeyen bir hata oluştu.";
       return rejectWithValue(message);
     }
   }
 );
 
-// Giriş yapma (login)
+// Giriş yapma
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData, { rejectWithValue }) => {
@@ -29,7 +27,7 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem("user", JSON.stringify(response.data.user));
       return response.data;
     } catch (error) {
-      const message = error.response?.data || "E posta veya Şifreniz hatalı.";
+      const message = error.response?.data || "E-posta veya şifre hatalı.";
       return rejectWithValue(message);
     }
   }
@@ -45,9 +43,7 @@ export const changePassword = createAsyncThunk(
         `${API_URL}/change-password`,
         passwordData,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       return response.data;
@@ -58,7 +54,6 @@ export const changePassword = createAsyncThunk(
   }
 );
 
-// Slice tanımı
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -80,6 +75,12 @@ const authSlice = createSlice({
     clearStatus: (state) => {
       state.error = null;
       state.success = null;
+    },
+    setUser: (state, action) => {
+      state.user = action.payload.user;
+      state.isAuthenticated = true;
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("token", action.payload.token);
     },
   },
   extraReducers: (builder) => {
@@ -127,5 +128,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearStatus } = authSlice.actions;
+export const { logout, clearStatus, setUser } = authSlice.actions;
 export default authSlice.reducer;

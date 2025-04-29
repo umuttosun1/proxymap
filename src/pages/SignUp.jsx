@@ -6,6 +6,7 @@ import {
   Typography,
   Divider,
 } from "@mui/material";
+import GoogleIcon from "@mui/icons-material/Google";
 import { useDispatch, useSelector } from "react-redux";
 import { createUser } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -29,10 +30,13 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const resultAction = await dispatch(createUser(formData));
-
     if (createUser.fulfilled.match(resultAction)) {
       navigate("/login");
     }
+  };
+
+  const handleGoogleSignUp = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   return (
@@ -40,6 +44,25 @@ const SignUp = () => {
       <Typography variant="h4" fontWeight="bold" mb={2}>
         Hesap Oluştur
       </Typography>
+
+      <Button
+        variant="outlined"
+        fullWidth
+        startIcon={<GoogleIcon />}
+        sx={{
+          mb: 1,
+          mt: 8,
+          color: "black",
+          borderColor: "black",
+          fontWeight: "bold",
+        }}
+        onClick={handleGoogleSignUp}
+      >
+        Google ile Kayıt Ol
+      </Button>
+
+      <Divider sx={{ my: 3 }}>VEYA</Divider>
+
       <form onSubmit={handleSubmit}>
         <TextField
           label="İsim"
@@ -83,7 +106,6 @@ const SignUp = () => {
           sx={{ mb: 1 }}
         />
 
-        {/* Şifre ile Buton arasına yerleştirilen küçük hata bilgilendirmesi */}
         {error && (
           <Typography
             variant="body2"

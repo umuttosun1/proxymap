@@ -6,8 +6,9 @@ import {
   Typography,
   Divider,
 } from "@mui/material";
+import GoogleIcon from "@mui/icons-material/Google";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../redux/slices/authSlice"; // Yeni thunk
+import { loginUser } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -27,10 +28,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const resultAction = await dispatch(loginUser(formData));
-
     if (loginUser.fulfilled.match(resultAction)) {
-      navigate("/dashboard"); // Başarılı login sonrası dashboarda
+      navigate("/dashboard");
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   return (
@@ -38,6 +42,25 @@ const Login = () => {
       <Typography variant="h4" fontWeight="bold">
         Giriş Yap
       </Typography>
+
+      <Button
+        variant="outlined"
+        fullWidth
+        startIcon={<GoogleIcon />}
+        sx={{
+          mb: 1,
+          mt: 8,
+          color: "black",
+          borderColor: "black",
+          fontWeight: "bold",
+        }}
+        onClick={handleGoogleLogin}
+      >
+        Google ile Giriş Yap
+      </Button>
+
+      <Divider sx={{ my: 3 }}>VEYA</Divider>
+
       <form onSubmit={handleSubmit}>
         <TextField
           label="E-Posta Adresi"
@@ -78,7 +101,7 @@ const Login = () => {
         </Button>
       </form>
 
-      <Typography variant="body2">
+      <Typography variant="body2" mt={2}>
         Hesabın yok mu?{" "}
         <a href="/signup" style={{ textDecoration: "none" }}>
           Hesap Oluştur
