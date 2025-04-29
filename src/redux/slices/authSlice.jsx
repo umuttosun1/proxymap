@@ -1,26 +1,36 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
-// API URL (backend'deki `createUser` fonksiyonunun çalıştığı URL)
-const API_URL = "https://your-backend.com/api/auth/createUser";
+const BASE_URL = "http://localhost:8080/api/auth";
 
-// ➤ Kullanıcı oluşturma isteği
-export const createUser = createAsyncThunk(
-  "auth/createUser",
-  async ({ fullname, email, password }, { rejectWithValue }) => {
+// ➤ Kayıt işlemi
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async (userData, { rejectWithValue }) => {
     try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullname, email, password }),
+      const response = await axios.post(`${BASE_URL}/register`, userData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Kayıt başarısız.");
+    }
+  }
+);
+
+// ➤ Giriş işlemi
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async ({ email, password }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/login`, {
+        email,
+        password,
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Kullanıcı oluşturulamadı.");
-      }
-      return data.user; // Backend'den dönen kullanıcı bilgisi
+      const token = response.data;
+      localStorage.setItem("token", token);
+      return token;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data || "Giriş başarısız.");
     }
   }
 );
@@ -29,28 +39,38 @@ export const createUser = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null,
+    token: localStorage.getItem("token") || null,
     loading: false,
     error: null,
   },
   reducers: {
     logout: (state) => {
-      state.user = null;
-      localStorage.removeItem("user");
+      state.token = null;
+      localStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(createUser.pending, (state) => {
+      .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(createUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
-        state.user = action.payload;
-        localStorage.setItem("user", JSON.stringify(action.payload));
       })
-      .addCase(createUser.rejected, (state, action) => {
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

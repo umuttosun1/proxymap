@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   TextField,
@@ -6,62 +6,82 @@ import {
   Typography,
   Divider,
 } from "@mui/material";
-import GoogleIcon from "@mui/icons-material/Google";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../redux/slices/authSlice"; // Yeni thunk
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.auth);
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const resultAction = await dispatch(loginUser(formData));
+
+    if (loginUser.fulfilled.match(resultAction)) {
+      navigate("/dashboard"); // Başarılı login sonrası dashboarda
+    }
+  };
+
   return (
     <Container maxWidth="xs" sx={{ textAlign: "center", mt: 5 }}>
       <Typography variant="h4" fontWeight="bold">
         Giriş Yap
       </Typography>
-      <Button
-        variant="outlined"
-        fullWidth
-        startIcon={<GoogleIcon />}
-        sx={{
-          mb: 1,
-          mt: 8,
-          color: "black",
-          borderColor: "black",
-          fontWeight: "bold",
-        }}
-      >
-        Google ile giriş yap
-      </Button>
 
-      <Divider sx={{ my: 2 }}>VEYA</Divider>
+      <Divider sx={{ my: 3 }}>VEYA</Divider>
 
-      <TextField
-        label="E-Posta Adresi"
-        variant="outlined"
-        fullWidth
-        color="black"
-        sx={{ mb: 1 }}
-      />
-      <TextField
-        label="Şifre"
-        type="password"
-        variant="outlined"
-        fullWidth
-        color="black"
-        sx={{ mb: 1 }}
-      />
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="E-Posta Adresi"
+          variant="outlined"
+          fullWidth
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          label="Şifre"
+          type="password"
+          variant="outlined"
+          fullWidth
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+          sx={{ mb: 3 }}
+        />
 
-      <Typography variant="body2" sx={{ textAlign: "left", mb: 2 }}>
-        <a href="#" style={{ textDecoration: "none" }}>
-          Şifreni mi Unuttun?
-        </a>
-      </Typography>
+        {error && (
+          <Typography color="error" sx={{ mb: 2 }}>
+            {error}
+          </Typography>
+        )}
 
-      <Button
-        variant="contained"
-        fullWidth
-        sx={{ backgroundColor: "black", color: "white" }}
-      >
-        Giriş Yap
-      </Button>
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{ backgroundColor: "black", color: "white", mb: 2 }}
+          disabled={loading}
+        >
+          {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
+        </Button>
+      </form>
 
-      <Typography variant="body2" sx={{ mt: 2 }}>
+      <Typography variant="body2">
         Hesabın yok mu?{" "}
         <a href="/signup" style={{ textDecoration: "none" }}>
           Hesap Oluştur

@@ -6,9 +6,8 @@ import {
   Typography,
   Divider,
 } from "@mui/material";
-import GoogleIcon from "@mui/icons-material/Google";
 import { useDispatch, useSelector } from "react-redux";
-import { createUser } from "../redux/slices/authSlice"; // Redux Slice'ı içe aktar
+import { registerUser } from "../redux/slices/authSlice"; // Yeni thunk
 import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
@@ -17,7 +16,8 @@ const SignUp = () => {
   const { loading, error } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
-    fullname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
   });
@@ -28,10 +28,10 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const resultAction = await dispatch(createUser(formData));
+    const resultAction = await dispatch(registerUser(formData));
 
-    if (createUser.fulfilled.match(resultAction)) {
-      navigate("/dashboard"); // Kullanıcı başarıyla kaydolursa yönlendir
+    if (registerUser.fulfilled.match(resultAction)) {
+      navigate("/login"); // Başarılı kayıt → login sayfasına yönlendir
     }
   };
 
@@ -41,31 +41,25 @@ const SignUp = () => {
         Hesap Oluştur
       </Typography>
 
-      <Button
-        variant="outlined"
-        fullWidth
-        startIcon={<GoogleIcon />}
-        sx={{
-          mb: 1,
-          mt: 8,
-          color: "black",
-          borderColor: "black",
-          fontWeight: "bold",
-        }}
-      >
-        Google ile Devam Et
-      </Button>
+      <Divider sx={{ my: 3 }}>VEYA</Divider>
 
-      <Divider sx={{ my: 2 }}>VEYA</Divider>
-
-      {/* Form */}
       <form onSubmit={handleSubmit}>
         <TextField
-          label="İsim Soyisim"
+          label="İsim"
           variant="outlined"
           fullWidth
-          name="fullname"
-          value={formData.fullname}
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          required
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          label="Soyisim"
+          variant="outlined"
+          fullWidth
+          name="lastName"
+          value={formData.lastName}
           onChange={handleChange}
           required
           sx={{ mb: 2 }}
@@ -78,7 +72,7 @@ const SignUp = () => {
           value={formData.email}
           onChange={handleChange}
           required
-          sx={{ mb: 1 }}
+          sx={{ mb: 2 }}
         />
         <TextField
           label="Şifre"
@@ -92,22 +86,25 @@ const SignUp = () => {
           sx={{ mb: 3 }}
         />
 
-        {/* Hata mesajı gösterme */}
-        {error && <Typography color="error">{error}</Typography>}
+        {error && (
+          <Typography color="error" sx={{ mb: 2 }}>
+            {error}
+          </Typography>
+        )}
 
         <Button
           type="submit"
           variant="contained"
           fullWidth
-          sx={{ backgroundColor: "black", color: "white" }}
+          sx={{ backgroundColor: "black", color: "white", mb: 2 }}
           disabled={loading}
         >
-          {loading ? "Kaydediliyor..." : "E-Posta Doğrula"}
+          {loading ? "Kaydediliyor..." : "Hesap Oluştur"}
         </Button>
       </form>
 
-      <Typography variant="body2" sx={{ mt: 2 }}>
-        Hesabın zaten var mı?{" "}
+      <Typography variant="body2">
+        Zaten hesabın var mı?{" "}
         <a href="/login" style={{ textDecoration: "none" }}>
           Giriş Yap
         </a>
